@@ -73,12 +73,26 @@ class UpdateManager:
                     if saved['repository']==self.config['repository'] and 0<=time.time()-saved['checked_at']<21600:raw=saved['release']
                 except (OSError,ValueError,KeyError,TypeError):pass
             if raw is None:
-                url=f'https://api.github.com/repos/{self.config["repository"]}/releases/latest'
-                request=urllib.request.Request(url,headers={'Accept':'application/vnd.github+json','User-Agent':'Xiaohongmao/'+self.config['version'],'X-GitHub-Api-Version':'2022-11-28'})
-                with urllib.request.build_opener().open(request,timeout=15) as response:
-                    data=response.read(1024*1024+1)
-                    if len(data)>1024*1024:raise ValueError('更新信息过大')
-                    raw=json.loads(data)
+                # Public release assets do not require an API token. Prefer the
+                # publisher's static feed over consuming shared anonymous API quota.
+                url=f'https://github.com/{self.config["repository"]}/releases/latest/download/update.json'
+                request=urllib.request.Request(url,headers={'User-Agent':'Xiaohongmao/'+self.config['version']})
+                try:
+                    with urllib.request.build_opener(SafeRedirect()).open(request,timeout=15) as response:
+                        data=response.read(1024*1024+1)
+                        if len(data)>1024*1024:raise ValueError('更新信息过大')
+                        raw=json.loads(data)
+                    if not isinstance(raw,dict) or raw.get('schema')!=1 or raw.get('repository')!=self.config['repository']:raise ValueError('发布清单来源或格式不正确')
+                except urllib.error.HTTPError as exc:
+                    if exc.code!=404:raise
+                    # Compatibility for older releases that did not ship a feed.
+                    url=f'https://api.github.com/repos/{self.config["repository"]}/releases/latest'
+                    request=urllib.request.Request(url,headers={'Accept':'application/vnd.github+json','User-Agent':'Xiaohongmao/'+self.config['version'],'X-GitHub-Api-Version':'2022-11-28'})
+                    with urllib.request.build_opener().open(request,timeout=15) as response:
+                        data=response.read(1024*1024+1)
+                        if len(data)>1024*1024:raise ValueError('更新信息过大')
+                        raw=json.loads(data)
+                choose_release(raw,self.config,self.distribution)
                 self.folder.mkdir(parents=True,exist_ok=True)
                 temporary=cache.with_suffix('.tmp');temporary.write_text(json.dumps({'repository':self.config['repository'],'checked_at':time.time(),'release':raw}),encoding='utf-8');os.replace(temporary,cache)
             selected=choose_release(raw,self.config,self.distribution)

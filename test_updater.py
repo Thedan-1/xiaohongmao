@@ -64,6 +64,20 @@ class UpdateTests(unittest.TestCase):
         with patch.object(updater.urllib.request,'build_opener') as request:self.task._check(True)
         request.assert_not_called();self.assertEqual(self.task.status()['phase'],'latest')
 
+    def test_static_public_feed_does_not_use_api_or_any_auth_token(self):
+        feed={**self.release,'schema':1,'repository':'Thedan-1/xiaohongmao'}
+        opener=Mock();opener.open.return_value=io.BytesIO(json.dumps(feed).encode())
+        with patch.object(updater.urllib.request,'build_opener',return_value=opener):self.task._check(False)
+        self.assertEqual(self.task.status()['phase'],'available');opener.open.assert_called_once()
+        request=opener.open.call_args.args[0]
+        self.assertEqual(request.full_url,'https://github.com/Thedan-1/xiaohongmao/releases/latest/download/update.json')
+        self.assertNotIn('Authorization',dict(request.header_items()))
+
+    def test_foreign_static_feed_is_rejected_without_downloading(self):
+        opener=Mock();opener.open.return_value=io.BytesIO(json.dumps({**self.release,'schema':1,'repository':'other/repo'}).encode())
+        with patch.object(updater.urllib.request,'build_opener',return_value=opener):self.task._check(False)
+        self.assertEqual(self.task.status()['phase'],'error');self.assertFalse(self.task.staged)
+
     def test_redirects_cannot_leave_github_content_hosts(self):
         handler=updater.SafeRedirect()
         for url in ['http://github.com/file','https://evil.test/file','https://github.com.evil.test/file']:

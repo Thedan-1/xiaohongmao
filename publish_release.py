@@ -5,7 +5,7 @@ import release_config
 
 ROOT=Path(__file__).resolve().parent
 
-def prepare(destination):
+def prepare(destination,notes=''):
     cfg=release_config.load();version=cfg['version'];release=ROOT/'release'
     installer=release/f'小红帽-Windows-x64-v{version}-普通版-安装.exe'
     manifest=json.loads(installer.with_suffix('.manifest.json').read_text(encoding='utf-8'))
@@ -24,12 +24,17 @@ def prepare(destination):
     sums=destination/'SHA256SUMS.txt';sums.write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in assets),encoding='utf-8');assets.append(sums)
     for source in [installer.with_suffix('.manifest.json')]:
         target=destination/'setup.manifest.json';shutil.copy2(source,target);assets.append(target)
+    feed={'schema':1,'repository':cfg['repository'],'tag_name':'v'+version,'draft':False,'prerelease':False,'body':notes,'assets':[]}
+    for path in assets[:2]:
+        feed['assets'].append({'name':path.name,'state':'uploaded','size':path.stat().st_size,'digest':'sha256:'+hashlib.sha256(path.read_bytes()).hexdigest(),
+                               'browser_download_url':f'https://github.com/{cfg["repository"]}/releases/download/v{version}/{path.name}'})
+    metadata=destination/'update.json';metadata.write_text(json.dumps(feed,ensure_ascii=False,indent=2),encoding='utf-8');assets.append(metadata)
     return cfg,assets
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--publish',action='store_true',help='Publish after uploading; default creates a draft');parser.add_argument('--notes',type=Path,required=True);parser.add_argument('--target',default='main');parser.add_argument('--validate-only',action='store_true');args=parser.parse_args()
     with tempfile.TemporaryDirectory(prefix='xhm-github-release-') as folder:
-        config,assets=prepare(Path(folder))
+        config,assets=prepare(Path(folder),args.notes.read_text(encoding='utf-8'))
         if args.validate_only:print(json.dumps({'version':config['version'],'files':[p.name for p in assets],'credential_embedded':False},ensure_ascii=False));return
         subprocess.run(['gh','release','create','v'+config['version'],*[str(p) for p in assets],'--repo',config['repository'],'--title','小红帽 v'+config['version'],'--notes-file',str(args.notes),'--target',args.target,'--draft'],check=True)
         if args.publish:subprocess.run(['gh','release','edit','v'+config['version'],'--repo',config['repository'],'--draft=false','--latest'],check=True)

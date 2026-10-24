@@ -14,7 +14,7 @@ python publish_release.py --notes docs/release-notes.md
 
 默认创建 **Draft**：先上传所有文件，再在 GitHub Releases 中审阅并发布。需要一次完成发布时显式加 `--publish`。已有同版本不会覆盖，修复应发布更高版本。
 
-仓库已提供 Actions 的 **Release** 工作流，恢复云端运行后可输入发布说明并构建；默认同样保留为草稿。当前使用本机发布命令。首次线上版本发布之后，客户端才能通过 `/releases/latest` 获取更新。
+仓库已提供 Actions 的 **Release** 工作流，恢复云端运行后可输入发布说明并构建；默认同样保留为草稿。当前使用本机发布命令。首次线上版本发布之后，客户端才能通过 `/releases/latest/download/update.json` 获取更新。
 
 ## 资产约定
 
@@ -22,10 +22,11 @@ python publish_release.py --notes docs/release-notes.md
 | --- | --- |
 | `xiaohongmao-x.y.z-windows-x64-setup.exe` | 安装版升级 |
 | `xiaohongmao-x.y.z-windows-x64-preview.zip` | 免安装预览升级 |
+| `update.json` | 客户端直接读取的正式版本与校验清单 |
 | `SHA256SUMS.txt` | 人工下载校验 |
 | `setup.manifest.json` | 普通包审计清单 |
 
-客户端使用 GitHub Releases API 返回的 SHA-256 digest，不把自填校验文件当成独立可信签名。不向用户分发 GitHub Token；公开仓库下载不需要每个人登录 GitHub。
+0.7.1 起，客户端直接读取同一 Release 的 `update.json`，不消耗共享的匿名 API 检查额度。清单与包必须来自配置的官方仓库；SHA-256 用于完整性核对，不是独立的发布者签名。不向用户分发 GitHub Token；公开仓库下载不需要每个人登录 GitHub。
 
 ## 版本与渠道
 

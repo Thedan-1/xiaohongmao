@@ -28,6 +28,8 @@
 
 **当前产品状态：** 小红书工作台已提供桌面包；淘宝店铺接入仍在实验验证阶段，尚未打通真实收发链路，不计入当前发行版能力。详见 [功能状态](docs/STATUS.md)。
 
+0.7.1 起使用 Release 中的静态更新清单，不要求使用者提供 GitHub Token，也不依赖匿名 API 额度。
+
 ## 三步开始
 
 1. 在 [Releases](https://github.com/Thedan-1/xiaohongmao/releases/latest) 下载 `windows-x64-setup.exe`。日常使用推荐安装版；快速体验可选 `windows-x64-preview.zip`，完整解压后启动“小红帽预览.exe”。
