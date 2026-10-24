@@ -81,6 +81,8 @@ def prepare_payload(source: Path, destination: Path, internal: bool, key_file: P
     # The writable key file lives in the per-user data home, never in {app}.
     included.append('default-key.txt')
     shutil.copy2(ROOT / 'installer/桌面版使用说明.txt', destination / '桌面版使用说明.txt')
+    guide=destination/'桌面版使用说明.txt'
+    guide.write_text(re.sub(r'^小红帽 \d+\.\d+\.\d+', '小红帽 '+release_config.load()['version'],guide.read_text(encoding='utf-8'),count=1),encoding='utf-8')
     included.append('桌面版使用说明.txt')
     shutil.copy2(ROOT / 'vendor/Motion-LICENSE.txt', destination / 'Motion-LICENSE.txt')
     included.append('Motion-LICENSE.txt')
