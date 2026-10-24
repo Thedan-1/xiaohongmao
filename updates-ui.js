@@ -34,4 +34,7 @@ window.updateApplyFailed=message=>{updateApplying=false;$('update-message').text
 updateBanner.onclick=e=>{if(e.target.closest('[data-view-update]')){openSettings('about');refreshUpdateStatus()}if(e.target.closest('[data-dismiss-update]')){updateBanner.hidden=true;try{sessionStorage.setItem('xhm-update-dismissed',updateState.release.version)}catch{}}};
 document.querySelector('[data-settings-tab="about"]').addEventListener('click',refreshUpdateStatus);
 document.querySelectorAll('[data-open-settings="about"]').forEach(button=>button.addEventListener('click',refreshUpdateStatus));
-if(window.XIAOHONGMAO_NATIVE&&!window.XIAOHONGMAO_SMOKE)setTimeout(()=>updateAction('check',{automatic:true}),3500);
+if(window.XIAOHONGMAO_NATIVE&&!window.XIAOHONGMAO_SMOKE){
+ setTimeout(()=>updateAction('check',{automatic:true}),3500);
+ setInterval(()=>updateAction('check',{automatic:true}),21660000);
+}

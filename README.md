@@ -3,7 +3,7 @@
 <img src="assets/hero.svg" alt="小红帽 · Windows 对话工作台" width="100%" />
 
 [![Release](https://img.shields.io/github/v/release/Thedan-1/xiaohongmao?color=ff3156&style=flat-square)](https://github.com/Thedan-1/xiaohongmao/releases/latest)
-[![CI](https://github.com/Thedan-1/xiaohongmao/actions/workflows/ci.yml/badge.svg)](https://github.com/Thedan-1/xiaohongmao/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/badge/CI-configured-77717f?style=flat-square)](https://github.com/Thedan-1/xiaohongmao/actions/workflows/ci.yml)
 ![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-24212d?style=flat-square)
 ![Desktop](https://img.shields.io/badge/Desktop-WebView2-24212d?style=flat-square)
 
@@ -50,7 +50,7 @@ flowchart LR
   G --> I[安装升级 / 预览目录切换]
 ```
 
-启动检查会使用本机缓存；下载和安装需要用户选择。不会因为发布新版本而中断正在执行的任务。
+启动时和约每 6 小时检查，使用本机缓存；下载和安装需要用户选择。不会因为发布新版本而中断正在执行的任务。
 
 | 安装版 | 预览版 |
 | --- | --- |
@@ -71,6 +71,8 @@ flowchart LR
 
 </details>
 
+> 云端工作流已配置，但当前无法运行；本版本采用本机隔离验证与本机构建发布。
+
 ## 工程导览
 
 | 位置 | 职责 |
@@ -85,7 +87,7 @@ flowchart LR
 | `test_*.py` | 隔离回归与边界验证 |
 | `.github/workflows/` | CI 与发行构建 |
 
-[架构说明](docs/ARCHITECTURE.md) · [本地构建](docs/BUILD.md) · [发布手册](docs/RELEASING.md) · [安全说明](SECURITY.md) · [贡献说明](CONTRIBUTING.md)
+[验证记录](docs/VERIFICATION.md) · [架构说明](docs/ARCHITECTURE.md) · [本地构建](docs/BUILD.md) · [发布手册](docs/RELEASING.md) · [安全说明](SECURITY.md) · [贡献说明](CONTRIBUTING.md)
 
 ## 使用边界
 

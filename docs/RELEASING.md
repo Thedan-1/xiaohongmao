@@ -14,7 +14,7 @@ python publish_release.py --notes docs/release-notes.md
 
 默认创建 **Draft**：先上传所有文件，再在 GitHub Releases 中审阅并发布。需要一次完成发布时显式加 `--publish`。已有同版本不会覆盖，修复应发布更高版本。
 
-也可以在 Actions 的 **Release** 工作流中输入发布说明并构建；默认同样保留为草稿。首次线上版本发布之后，客户端才能通过 `/releases/latest` 获取更新。
+仓库已提供 Actions 的 **Release** 工作流，恢复云端运行后可输入发布说明并构建；默认同样保留为草稿。当前使用本机发布命令。首次线上版本发布之后，客户端才能通过 `/releases/latest` 获取更新。
 
 ## 资产约定
 
