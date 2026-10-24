@@ -1,0 +1,18 @@
+name: CI
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare dependencies
+        run: python -m pip install --target .runtime -r requirements.txt
+      - name: Compile offline UI
+        run: python build_ui.py
+      - name: Isolated regression (no paid AI or real messages)
+        run: python -m unittest test_updater test_update_http test_ai_settings test_ai_settings_http test_budget_boundaries test_chat_authorization test_search_readiness test_taobao -q

@@ -1,0 +1,48 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish after checks and upload (otherwise keep a draft)'
+        type: boolean
+        default: false
+      notes:
+        description: 'Release notes'
+        type: string
+        required: true
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare official dependencies
+        run: python bootstrap_build.py
+      - name: Ensure Inno Setup
+        shell: pwsh
+        run: |
+          if (-not (Test-Path '${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe') -and -not (Test-Path 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe')) { choco install innosetup --yes --no-progress }
+      - name: Regression
+        run: python -m unittest test_updater test_ai_settings test_ai_settings_http test_budget_boundaries -q
+      - name: Build public preview and installer
+        run: |
+          python build_preview.py
+          python build_installer.py
+      - name: Prepare release notes
+        env:
+          RELEASE_NOTES: ${{ inputs.notes }}
+        shell: pwsh
+        run: '[IO.File]::WriteAllText((Join-Path $PWD "release-notes.md"), $env:RELEASE_NOTES, [Text.UTF8Encoding]::new($false))'
+      - name: Upload audited public assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLISH: ${{ inputs.publish }}
+        shell: pwsh
+        run: |
+          $args = @('publish_release.py', '--notes', 'release-notes.md', '--target', '${{ github.sha }}')
+          if ($env:PUBLISH -eq 'true') { $args += '--publish' }
+          python @args

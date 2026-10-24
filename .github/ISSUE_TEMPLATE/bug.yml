@@ -1,0 +1,19 @@
+name: 问题反馈
+description: 描述可复现的客户端问题
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: 版本与形式
+      placeholder: 例如 0.7.0 / 安装版 / Windows 11
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 发生了什么
+      description: 提供操作步骤、预期与实际结果。截图和日志请隐藏密钥、Cookie 和个人信息。
+    validations:
+      required: true

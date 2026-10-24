@@ -1,0 +1,11 @@
+name: 功能建议
+description: 说明目标与使用场景
+title: "[Feature] "
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 你希望完成什么
+      description: 描述使用场景、输入和预期结果。
+    validations:
+      required: true

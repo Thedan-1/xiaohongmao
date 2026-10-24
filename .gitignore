@@ -1,0 +1,10 @@
+.runtime/
+data/
+*.log
+__pycache__/
+*.pyc
+release/
+build-tools/*.zip
+
+# Local credentials
+*.local.txt
