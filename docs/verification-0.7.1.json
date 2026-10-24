@@ -1,0 +1,25 @@
+{
+  "repository": "https://github.com/Thedan-1/xiaohongmao",
+  "release": "https://github.com/Thedan-1/xiaohongmao/releases/tag/v0.7.1",
+  "live_public_static_feed": "pass",
+  "live_downloads": [
+    {
+      "distribution": "preview",
+      "detected_version": "0.7.1",
+      "downloaded_bytes": 50928970,
+      "static_feed_github_digest_and_local_build_match": true,
+      "asset": "xiaohongmao-0.7.1-windows-x64-preview.zip"
+    },
+    {
+      "distribution": "installed",
+      "detected_version": "0.7.1",
+      "downloaded_bytes": 37313959,
+      "static_feed_github_digest_and_local_build_match": true,
+      "asset": "xiaohongmao-0.7.1-windows-x64-setup.exe"
+    }
+  ],
+  "current_version_does_not_prompt_false_upgrade": true,
+  "installed_during_probe": false,
+  "user_data_accessed": false,
+  "client_github_token_required": false
+}
